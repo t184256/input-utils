@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Alexander Sosedkin <monk@unboiled.info>
+// SPDX-License-Identifier: CC-PDDC
+
 #include <assert.h>
 #include <fcntl.h>
 #include <stdlib.h>
