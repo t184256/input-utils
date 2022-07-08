@@ -1,9 +1,9 @@
 // SPDX-FileCopyrightText: 2022 Alexander Sosedkin <monk@unboiled.info>
 // SPDX-License-Identifier: CC-PDDC
 
-//#include <assert.h>
-//#include <fcntl.h>
+#include <fcntl.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include <unistd.h>
 
@@ -29,26 +29,26 @@ int main(int argc, char** argv) {
 	atexit(cleanup);
 
 	char input_device_name[128];
-	unsigned i, fails, successes = 0;
-	for (i = fails = successes = 0; fails < successes + 8; i++) {
+	unsigned i, fails = 0, successes = 0;
+	for (i = 0; i < 1024 && fails < successes / 2 + 4; i++) {  // overscan
 		snprintf(input_device_name, 128, "/dev/input/event%d", i);
-		in_dev_fd = open(argv[1], O_RDONLY);
+		in_dev_fd = open(input_device_name, O_RDONLY);
 		if (in_dev_fd <= 0) {
-			fprintf(stderr, "Cannot open %s, ending enumeration",
-				input_device_name);
+			fails++;
 			continue;
 		}
-		assert(in_dev_fd > 0);
 		int err = libevdev_new_from_fd(in_dev_fd, &in_dev);
 		if (err) {
-			fprintf(stderr, "Cannot init %s, ending enumeration",
+			fprintf(stderr, "Cannot init %s, skipping\n",
 				input_device_name);
+			fails++;
 			continue;
 		}
-		if (strcmp(libevdev_get_name(&in_dev), argv[1]) == 0) {
+		if (strcmp(libevdev_get_name(in_dev), argv[1]) == 0) {
 			puts(input_device_name);
 			return 0;
 		}
+		successes++;
 	}
 	return 7;
 }

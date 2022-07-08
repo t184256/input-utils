@@ -17,7 +17,7 @@
             buildInputs = with pkgs; [ libevdev ];
             installPhase = ''
               mkdir -p $out/bin
-              cp ./wait-for-keypress $out/bin/
+              cp ./wait-for-keypress ./find-input-device $out/bin/
             '';
           };
         in
