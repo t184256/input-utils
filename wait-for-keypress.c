@@ -27,9 +27,11 @@ struct input_event read_event(void) {
 	struct input_event iev;
 	int res;
 	int flags = LIBEVDEV_READ_FLAG_NORMAL | LIBEVDEV_READ_FLAG_BLOCKING;
+	int type_matches;
 	do {
 		res = libevdev_next_event(in_dev, flags, &iev);
-	} while (!(res == LIBEVDEV_READ_STATUS_SUCCESS && iev.type == EV_KEY));
+		type_matches = iev.type == EV_KEY || iev.type == EV_SW;
+	} while (!(res == LIBEVDEV_READ_STATUS_SUCCESS && type_matches));
 	return iev;
 }
 
